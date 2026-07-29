@@ -1,23 +1,24 @@
 extends EventBase
 
-var _blocking = false
-
 func _init():
     id = "BDCC2SceneBlocker"
 
 func registerTriggers(es):
-    es.addTrigger(self, Trigger.SceneAndStateHook, ["rahi3RahiPassOutScene", ""])
+    es.addTrigger(self, Trigger.WakeUpInCell)
 
-func run(_triggerID, _args):
-    if _blocking:
-        return
+func react(_triggerID, _args):
     if not _isBDCC2Active():
-        return
-    _blocking = true
-    var currentScene = GM.main.getCurrentScene()
-    if currentScene != null:
-        currentScene.endScene()
-    _blocking = false
+        return false
+    if getFlag("RahiModule.rahi3SceneHappened"):
+        return false
+    if not getFlag("RahiModule.rahi2SceneHappened"):
+        return false
+    setFlag("RahiModule.rahi3SceneHappened", true)
+    setFlag("RahiModule.rahi3DayHappened", GM.main.getDays())
+    return true
+
+func getPriority():
+    return 6
 
 func _isBDCC2Active():
     if GM.main == null:

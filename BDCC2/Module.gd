@@ -3,25 +3,26 @@ extends Module
 func _init():
     id = "BDCC2"
     author = "foxinwinter"
-    gameExtenders = ["res://Modules/BDCC2/bdcc2GameExtender.gd"]
-    worldEdits = ["res://Modules/BDCC2/bdcc2WorldEdit.gd"]
+    gameExtenders = ["res://Modules/BDCC2/extender.gd"]
+    worldEdits = ["res://Modules/BDCC2/worldEdit.gd"]
     events = [
-        "res://Modules/BDCC2/events/bdcc2SceneBlocker.gd",
+        "res://Modules/BDCC2/events/misc/sceneBlocker.gd",
+        "res://Modules/BDCC2/events/misc/endingInjector.gd",
     ]
     quests = [
-        "res://Modules/BDCC2/quests/bdcc2Quest.gd",
+        "res://Modules/BDCC2/quests/quests.gd",
     ]
     scenes = [
-        "res://Modules/BDCC2/scenes/common/ch1MorningAfter.gd",
-        "res://Modules/BDCC2/scenes/common/ch1ShipLife.gd",
-        "res://Modules/BDCC2/scenes/common/ch1NightWatch.gd",
-        "res://Modules/BDCC2/scenes/common/ch1Arrival.gd",
-        "res://Modules/BDCC2/scenes/common/ch2ToTheFarm.gd",
-        "res://Modules/BDCC2/scenes/common/ch2MeetNova.gd",
-        "res://Modules/BDCC2/scenes/common/ch2RecruitNova.gd",
-        "res://Modules/BDCC2/scenes/common/taviCommsScene.gd",
-        "res://Modules/BDCC2/scenes/common/shipRestScene.gd",
-        "res://Modules/BDCC2/scenes/common/shipEatScene.gd",
+        "res://Modules/BDCC2/scenes/ch1/ch1MorningAfter.gd",
+        "res://Modules/BDCC2/scenes/ch1/ch1ShipLife.gd",
+        "res://Modules/BDCC2/scenes/ch1/ch1NightWatch.gd",
+        "res://Modules/BDCC2/scenes/ch1/ch1Arrival.gd",
+        "res://Modules/BDCC2/scenes/ch2/ch2ToTheFarm.gd",
+        "res://Modules/BDCC2/scenes/ch2/ch2MeetNova.gd",
+        "res://Modules/BDCC2/scenes/ch2/ch2RecruitNova.gd",
+        "res://Modules/BDCC2/scenes/common/player-ship/taviCommsScene.gd",
+        "res://Modules/BDCC2/scenes/common/player-ship/shipRestScene.gd",
+        "res://Modules/BDCC2/scenes/common/player-ship/shipEatScene.gd",
     ]
 
 func getFlags():
@@ -40,8 +41,8 @@ func getFlags():
     }
 
 func preInit():
-    GlobalRegistry.registerMapFloor("SyndicateShipUpper", "res://Modules/BDCC2/world/syndicateShip/upperFloor.tscn")
-    GlobalRegistry.registerMapFloor("SyndicateShipLower", "res://Modules/BDCC2/world/syndicateShip/lowerFloor.tscn")
+    GlobalRegistry.registerMapFloor("SyndicateShipUpper", "res://Modules/BDCC2/world/syndicateShip/floors/upperFloor.tscn")
+    GlobalRegistry.registerMapFloor("SyndicateShipLower", "res://Modules/BDCC2/world/syndicateShip/floors/lowerFloor.tscn")
 
 func postInit():
     Console.addCommand("bdcc2", self, "consoleRunBDCC2", [], "Run a BDCC2 chapter 1 scene (morningafter, shiplife, nightwatch, arrival)")
