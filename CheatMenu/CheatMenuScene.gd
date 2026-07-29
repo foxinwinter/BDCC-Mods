@@ -76,6 +76,9 @@ var _selectedCategory = ""
 var _selectedSubCategory = ""
 var _selectedStat = ""
 var _selectedSkill = ""
+var _relCharID = ""
+var _relGroup = ""
+var _relPage = 0
 var _itemPage = 0
 
 var _itemSubCategories = {
@@ -86,6 +89,7 @@ var _itemSubCategories = {
         ["Plugs", ["buttplug", "vaginalplug"]],
         ["Gags", ["ballgag", "caninedildogag", "ringgag", "basketmuzzle"]],
         ["Collars", ["inmatecollar", "oldcollar"]],
+        ["Misc", ["HypnovisorMk1", "HypnovisorDisabled"]],
     ]
 }
 
@@ -143,6 +147,12 @@ func _run():
             showPlayerHealMenu()
         "player_misc":
             showPlayerMiscMenu()
+        "relationships":
+            showRelationshipsMenu()
+        "rel_list":
+            showRelCharList()
+        "rel_char":
+            showRelCharDetail()
         "encounters":
             showEncountersMenu()
         "encounters_dev":
@@ -172,13 +182,14 @@ func _openCM():
     GM.main.runCurrentScene()
 
 func showMainMenu():
-    addButton("Teleport",    "Move to any room",           "menu_teleport")
-    addButton("Give Items",  "Spawn items into inventory", "menu_items")
-    addButton("Adjust Stats","Strength/Agility/Vitality/Sexiness", "menu_stats")
-    addButton("Adjust Skills","BDSM/SexSlave/CumLover/etc","menu_skills")
-    addButton("Utilities",   "Sleep, time advance, character creator", "menu_utilities")
-    addButton("Player",      "Healing, godmode, status effects, misc", "menu_player")
-    addButton("Close",       "Close cheat menu",           "menu_close")
+    addButton("Teleport",      "Move to any room",           "menu_teleport")
+    addButton("Give Items",    "Spawn items into inventory", "menu_items")
+    addButton("Adjust Stats",  "Strength/Agility/Vitality/Sexiness", "menu_stats")
+    addButton("Adjust Skills", "BDSM/SexSlave/CumLover/etc", "menu_skills")
+    addButton("Relationships", "Set affection/lust, portal panties on anyone", "menu_relationships")
+    addButton("Utilities",     "Sleep, time advance, character creator", "menu_utilities")
+    addButton("Player",        "Healing, godmode, status effects, misc", "menu_player")
+    addButton("Close",         "Close cheat menu",           "menu_close")
 
 func showTeleportAreas():
     for area in cheatRooms.keys():
@@ -432,6 +443,75 @@ func showEncountersDevMenu():
     addButton("PC Override",     "Override PC appearance",         "enc_pcoverride")
     addButton("Back", "", "menu_encounters")
 
+func showRelationshipsMenu():
+    addButton("Named Characters", "Main story NPCs", "rel_group_static")
+    addButton("Inmates", "Dynamic inmates", "rel_group_dynamic", [CharacterType.Inmate])
+    addButton("Guards", "Dynamic guards", "rel_group_dynamic", [CharacterType.Guard])
+    addButton("Nurses", "Dynamic nurses", "rel_group_dynamic", [CharacterType.Nurse])
+    addButton("Engineers", "Dynamic engineers", "rel_group_dynamic", [CharacterType.Engineer])
+    addButton("Back", "", "menu_main")
+    addButton("Close", "", "menu_close")
+
+func showRelCharList():
+    var chars = getCharsForGroup()
+    var perPage = 12
+    var totalPages = max(1, ceil(float(chars.size()) / perPage))
+    if _relPage >= totalPages:
+        _relPage = totalPages - 1
+    var startIdx = _relPage * perPage
+    var endIdx = min(startIdx + perPage, chars.size())
+    var perRow = 5
+    var lastRowStart = 10
+
+    for pos in range(lastRowStart):
+        if pos < endIdx - startIdx:
+            var cid = chars[startIdx + pos]
+            var c = GM.main.getCharacter(cid)
+            var name = cid
+            if c != null:
+                name = c.getName()
+            if name.length() > 21:
+                name = name.substr(0, 18) + "..."
+            addButton(name, cid, "rel_select_char", [cid])
+        else:
+            addButton("", "", "")
+
+    var itemsOnPage = endIdx - startIdx
+    var itemsInLastRow = max(0, itemsOnPage - lastRowStart)
+    for pos in range(itemsInLastRow):
+        var cid = chars[startIdx + lastRowStart + pos]
+        var c = GM.main.getCharacter(cid)
+        var name = cid
+        if c != null:
+            name = c.getName()
+        if name.length() > 21:
+            name = name.substr(0, 18) + "..."
+        addButton(name, cid, "rel_select_char", [cid])
+
+    var slotsLeft = perRow - itemsInLastRow
+    for j in range(slotsLeft - 3):
+        addButton("", "", "")
+    addButton("<< Prev", "", "rel_page_prev")
+    addButton("Next >>", "", "rel_page_next")
+    addButton("Back", "", "relationships")
+    addButton("Close", "", "menu_close")
+
+func showRelCharDetail():
+    var aff = GM.main.RS.getAffection(_relCharID, "pc")
+    var lust = GM.main.RS.getLust(_relCharID, "pc")
+    var c = GM.main.getCharacter(_relCharID)
+    var name = _relCharID
+    if c != null:
+        name = c.getName()
+    say("Character: [b]" + name + "[/b]  (" + _relCharID + ")\nAffection: [b]" + str(aff) + "[/b]   Lust: [b]" + str(lust) + "[/b]")
+    addTextbox("rel_aff_val")
+    addButton("Set Affection", "Set to value above (-1..1)", "rel_set_affection")
+    addTextbox("rel_lust_val")
+    addButton("Set Lust", "Set to value above (0..1)", "rel_set_lust")
+    addButton("Portal Panties", "Put portal panties on this char", "rel_pp")
+    addButton("Back to list", "", "rel_back")
+    addButton("Close", "", "menu_close")
+
 func showPlayerMenu():
     addButton("Healing", "", "player_heal")
     addButton("Misc",    "", "player_misc")
@@ -459,12 +539,29 @@ func removeBadStatusEffects():
         if effect != null and effect.getIconColor() == badColor:
             GM.pc.removeEffect(effectID)
 
+func getCharsForGroup():
+    var result = []
+    if _relGroup == "static":
+        var statics = GM.main.getCharacters()
+        for cid in statics:
+            result.append(cid)
+    else:
+        var dynamics = GM.main.getDynamicCharacters()
+        for cid in dynamics:
+            var c = dynamics[cid]
+            if c != null and c.getCharacterType() == _relGroup:
+                result.append(cid)
+    result.sort()
+    return result
+
 func _react(action, _args):
     match action:
         "menu_main":
             setState("main")
         "menu_teleport":
             setState("tp_area")
+        "menu_relationships":
+            setState("relationships")
         "menu_items":
             setState("items")
         "menu_items_credits":
@@ -479,6 +576,54 @@ func _react(action, _args):
             setState("player")
         "menu_close":
             endScene()
+        "rel_group_static":
+            _relGroup = "static"
+            _relPage = 0
+            setState("rel_list")
+        "rel_group_dynamic":
+            _relGroup = _args[0]
+            _relPage = 0
+            setState("rel_list")
+        "rel_select_char":
+            _relCharID = _args[0]
+            setState("rel_char")
+        "rel_set_affection":
+            var val = float(getTextboxData("rel_aff_val"))
+            GM.main.RS.setAffection(_relCharID, "pc", val)
+            addMessage("Affection set to " + str(val))
+            setState("rel_char")
+        "rel_set_lust":
+            var val = float(getTextboxData("rel_lust_val"))
+            GM.main.RS.setLust(_relCharID, "pc", val)
+            addMessage("Lust set to " + str(val))
+            setState("rel_char")
+        "rel_pp":
+            var target = GM.main.getCharacter(_relCharID)
+            if target == null:
+                addMessage("Character not found!")
+                setState("rel_char")
+                return
+            var panties = GlobalRegistry.createItem("PortalPanties")
+            if panties == null:
+                addMessage("Failed to create PortalPanties item!")
+                setState("rel_char")
+                return
+            target.getInventory().forceEquipStoreOtherUnlessRestraint(panties)
+            addMessage("Portal panties put on " + _relCharID)
+            setState("rel_char")
+        "rel_page_prev":
+            var chars = getCharsForGroup()
+            var totalP = max(1, ceil(float(chars.size()) / 12))
+            _relPage = totalP - 1 if _relPage <= 0 else _relPage - 1
+            setState("rel_list")
+        "rel_page_next":
+            var chars = getCharsForGroup()
+            var totalP = max(1, ceil(float(chars.size()) / 12))
+            _relPage = 0 if _relPage >= totalP - 1 else _relPage + 1
+            setState("rel_list")
+        "rel_back":
+            _relCharID = ""
+            setState("rel_list")
         "tp_select_area":
             _selectedArea = _args[0]
             setState("tp_room")

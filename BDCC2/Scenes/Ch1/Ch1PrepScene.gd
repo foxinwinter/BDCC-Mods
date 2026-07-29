@@ -3,13 +3,12 @@ extends SceneBase
 func _init():
     sceneID = "BDCC2_Ch1Prep"
 
-func _initScene(_args = []):
-    setFlag("BDCC2.phase", "prep")
-
 func _run():
     if state == "":
+        GM.pc.setLocation("bdcc2_syndiship")
+        aimCameraAndSetLocName("bdcc2_syndiship")
         addCharacter("tavi", ["naked"])
-        playAnimation(StageScene.Solo, "sit", {npc="tavi", npcBodyState={naked=true}})
+        playAnimation(StageScene.Duo, "stand", {npc="tavi", npcBodyState={naked=true}})
         saynn("Rustbreak is exactly what you expected — a ramshackle collection of prefab habs bolted to the inside of a hollowed asteroid. The air smells of ozone, cheap synth-booze, and desperation.")
         saynn("Tavi leads you through the main thoroughfare with the confidence of someone who's been here before. She probably has.")
         saynn("[say=tavi]Keep your eyes open and your hand near your weapon. Rustbreak doesn't have laws, just suggestions.[/say]")
@@ -35,9 +34,9 @@ func _run():
             GM.pc.setCredits(GM.pc.getCredits() - cost)
             saynn("You transfer the credits. The vendor's expression doesn't change, but he pushes the goods across the counter. Tavi scoops them up with a grin.")
             saynn("[say=tavi]See? Easy. Now let's get changed.[/say]")
-            setFlag("BDCC2.hasDisguises", true)
-            setFlag("BDCC2.hasKeychip", true)
-            setFlag("BDCC2.hasFakeIDs", true)
+            GM.main.setFlag("BDCC2.hasDisguises", true)
+            GM.main.setFlag("BDCC2.hasKeychip", true)
+            GM.main.setFlag("BDCC2.hasFakeIDs", true)
             addButton("Head to the ship", "Get changed and debrief", "changed")
         else:
             saynn("You check your credstick. Empty. The captain's credits didn't survive the escape.")
@@ -56,9 +55,9 @@ func _run():
             GM.pc.setCredits(GM.pc.getCredits() - cost)
             saynn("You transfer the reduced amount. The vendor bags the goods. Tavi claps you on the shoulder.")
             saynn("[say=tavi]Alright, team. Let's gear up.[/say]")
-            setFlag("BDCC2.hasDisguises", true)
-            setFlag("BDCC2.hasKeychip", true)
-            setFlag("BDCC2.hasFakeIDs", true)
+            GM.main.setFlag("BDCC2.hasDisguises", true)
+            GM.main.setFlag("BDCC2.hasKeychip", true)
+            GM.main.setFlag("BDCC2.hasFakeIDs", true)
             addButton("Head to the ship", "Get changed and debrief", "changed")
         else:
             saynn("Even with the discount, your credstick comes up short.")
@@ -82,9 +81,9 @@ func _run():
         saynn("[say=tavi]Told you. Now let's go buy our tickets to Themis.[/say]")
         saynn("You head back to the depot. The vendor takes the creds without comment and hands over the bag.")
         saynn("[say=tavi]Disguises, IDs, keychip. We're set.[/say]")
-        setFlag("BDCC2.hasDisguises", true)
-        setFlag("BDCC2.hasKeychip", true)
-        setFlag("BDCC2.hasFakeIDs", true)
+        GM.main.setFlag("BDCC2.hasDisguises", true)
+        GM.main.setFlag("BDCC2.hasKeychip", true)
+        GM.main.setFlag("BDCC2.hasFakeIDs", true)
         addButton("Head to the ship", "Get changed and debrief", "changed")
 
     if state == "changed":
@@ -97,7 +96,7 @@ func _run():
         saynn("[say=tavi]Professional. Trustworthy. Definitely not a wanted fugitive.[/say]")
         saynn("She laughs at her own joke, then tosses you a datapad with your cover identity loaded on it.")
         saynn("[say=tavi]You're technician third-class Andrea Vos. Assigned to Themis for a routine systems audit. I'm your supervisor. Don't talk to anyone who outranks us.[/say]")
-        addButton("Ready when you are", "Finalize preparations", "end_scene")
+        addButton("Ready when you are", "Finalize preparations", "show_prep_end")
 
     if state == "end_scene":
         saynn("You take a steadying breath. The uniform feels foreign, but it's a good kind of foreign. The kind that means forward momentum.")
@@ -105,6 +104,9 @@ func _run():
         addButton("Let's roll", "Begin the approach to Themis", "end_scene")
 
 func _react(_action, _args):
+    if _action == "show_prep_end":
+        setState("end_scene")
+        return
     if _action == "end_scene":
         endScene()
         return

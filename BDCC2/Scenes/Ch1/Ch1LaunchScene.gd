@@ -3,11 +3,10 @@ extends SceneBase
 func _init():
     sceneID = "BDCC2_Ch1Launch"
 
-func _initScene(_args = []):
-    setFlag("BDCC2.phase", "launch")
-
 func _run():
     if state == "":
+        GM.pc.setLocation("bdcc2_syndiship")
+        aimCameraAndSetLocName("bdcc2_syndiship")
         addCharacter("tavi")
         playAnimation(StageScene.Duo, "stand", {npc="tavi"})
         saynn("The stolen Syndicate transport hums beneath you as you settle into the co-pilot's seat. The uniform itches. The fake ID feels heavy in your pocket. Ahead, through the viewport, Themis Relay Station grows from a distant speck to a sprawling structure.")
@@ -38,7 +37,7 @@ func _run():
         saynn("[say=tavi]Welcome to Themis. Try not to break anything until I tell you to.[/say]")
         saynn("She flashes you a grin over her shoulder — the same reckless, infuriating, brilliant grin that's carried you this far.")
         saynn("Chapter 1 complete.")
-        setFlag("BDCC2.Ch1Complete", true)
+        GM.main.setFlag("BDCC2.Ch1Complete", true)
         addButton("Continue", "End chapter 1", "end_scene")
 
 func _react(_action, _args):

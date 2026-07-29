@@ -18,6 +18,5 @@ func pcUpdateNonBattleEffects(_pc):
     var hasCh7Done = GM.main.getFlag("TaviModule.Ch7CaptainSceneHappened", false)
     if hasKillEnding and hasMaxCorruption and hasCh7Done:
         _continueUnlocked = true
-        GM.main.setFlag("BDCC2.continueUnlocked", true)
         if GM.ui != null:
             GM.ui.updateButtons()

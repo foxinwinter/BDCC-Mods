@@ -3,12 +3,11 @@ extends SceneBase
 func _init():
     sceneID = "BDCC2_Ch1WakeUp"
 
-func _initScene(_args = []):
-    pass
-
 func _run():
     if state == "":
-        var hasRahi = getFlag("RahiModule.rahiMile8Happened", false)
+        GM.pc.setLocation("bdcc2_syndiship")
+        aimCameraAndSetLocName("bdcc2_syndiship")
+        var hasRahi = GM.main.getFlag("RahiModule.rahiMile8Happened", false)
         if hasRahi:
             addCharacter("rahi")
         addCharacter("tavi", ["naked"])

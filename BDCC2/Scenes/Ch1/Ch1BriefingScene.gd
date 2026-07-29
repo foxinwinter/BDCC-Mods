@@ -3,11 +3,10 @@ extends SceneBase
 func _init():
     sceneID = "BDCC2_Ch1Briefing"
 
-func _initScene(_args = []):
-    setFlag("BDCC2.phase", "briefing")
-
 func _run():
     if state == "":
+        GM.pc.setLocation("bdcc2_syndiship")
+        aimCameraAndSetLocName("bdcc2_syndiship")
         addCharacter("tavi", ["naked"])
         playAnimation(StageScene.Duo, "stand", {npc="tavi", npcBodyState={naked=true}})
         saynn("The ship drifts in low-power mode, tucked behind a chunk of debris on the outskirts of the Rustbreak asteroid field. Tavi has the station schematics pulled up on every available screen.")
