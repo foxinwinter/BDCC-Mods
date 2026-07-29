@@ -5,6 +5,9 @@ func _init():
     author = "foxinwinter"
     gameExtenders = ["res://Modules/BDCC2/bdcc2GameExtender.gd"]
     worldEdits = ["res://Modules/BDCC2/bdcc2WorldEdit.gd"]
+    events = [
+        "res://Modules/BDCC2/events/bdcc2SceneBlocker.gd",
+    ]
     quests = [
         "res://Modules/BDCC2/quests/bdcc2Quest.gd",
     ]
