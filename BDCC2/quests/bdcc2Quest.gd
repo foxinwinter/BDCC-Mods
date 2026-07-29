@@ -19,9 +19,10 @@ func getProgress():
         elif getFlag("BDCC2.Ch1_ShipLifeDone", false):
             result.append("Spend time with Tavi during the journey")
         elif getFlag("BDCC2.Ch1_MorningDone", false):
-            result.append("Get to know your new ship and crew")
+            result.append("Get to know your new ship")
         else:
             result.append("Wake up and talk to Tavi about the plan")
+        return result
 
     if getFlag("BDCC2.Ch2Complete", false):
         result.append("Recruited Nova")
@@ -34,6 +35,7 @@ func getProgress():
             result.append("Walk to Dawfort Creamery through Azure Cove")
         else:
             result.append("Recruit Nova to your cause")
+        return result
 
     result.append("Secure Syndicate backing for the Themis heist")
     result.append("Retrieve Tavi's ship from Themis and restore Elena's backup")
