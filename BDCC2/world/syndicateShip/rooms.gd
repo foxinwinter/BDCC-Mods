@@ -37,7 +37,15 @@ static func build(world, floorID):
         icon = RoomStuff.RoomSprite.NONE,
         color = RoomStuff.RoomColor.Grey,
         gridColor = RoomStuff.RoomColor.Grey,
-        canN = true, canS = true, canW = false, canE = true,
+        canN = true, canS = true, canW = true, canE = true,
+    })
+    _add_room(world, floorID, "syndi_cargo_stairs_down", Vector2(14, 7), {
+        name = "Cargo Stairs - Going Down",
+        desc = "A narrow staircase descending into the lower levels of the ship. The air gets cooler as you look down. A faded sign reads: LOWER CARGO — ENGINE ACCESS.",
+        icon = RoomStuff.RoomSprite.STAIRS,
+        color = RoomStuff.RoomColor.Grey,
+        gridColor = RoomStuff.RoomColor.Grey,
+        canN = false, canS = false, canW = false, canE = true,
     })
     _add_room(world, floorID, "syndi_cargo_stairs", Vector2(16, 7), {
         name = "Cargo Stairs - Going Up",
@@ -58,15 +66,58 @@ static func build(world, floorID):
     world.addTransitions([floorID])
 
 static func build_upper(world, floorID):
-    _add_room(world, floorID, "syndi_upper_stairs", Vector2(0, 0), {
+    _add_room(world, floorID, "syndi_shower", Vector2(0, 0), {
+        name = "Shower Room",
+        desc = "A compact shower stall with a single overhead nozzle. The water pressure is surprisingly good up here. A small locker holds clean towels.",
+        icon = RoomStuff.RoomSprite.BATH,
+        color = RoomStuff.RoomColor.Pink,
+        gridColor = RoomStuff.RoomColor.Pink,
+        canE = true, canN = false, canS = false, canW = false,
+    })
+    _add_room(world, floorID, "syndi_captain", Vector2(1, 0), {
+        name = "Captain's Quarters",
+        desc = "The captain's private quarters. A narrow bed is bolted to the bulkhead, neatly made. A small desk holds a datapad and a coffee mug. A compact terminal on the desk flickers with an incoming comms signal. The faint scent of cheap cologne lingers in the recycled air.",
+        icon = RoomStuff.RoomSprite.BED,
+        color = RoomStuff.RoomColor.Blue,
+        gridColor = RoomStuff.RoomColor.Blue,
+        canW = true, canE = true, canS = true, canN = false,
+    })
+    _add_room(world, floorID, "syndi_storage", Vector2(2, 0), {
+        name = "Storage Room",
+        desc = "A cramped storage room filled with supply crates, spare parts, and equipment lockers. A personal locker in the corner looks like it could securely store your belongings.",
+        icon = RoomStuff.RoomSprite.NONE,
+        color = RoomStuff.RoomColor.Orange,
+        gridColor = RoomStuff.RoomColor.Orange,
+        canW = true, canN = false, canS = false, canE = false,
+    })
+    _add_room(world, floorID, "syndi_upper_corridor", Vector2(1, 1), {
+        name = "Upper Corridor",
+        desc = "A short corridor connecting the upper deck areas. The walls are lined with conduit panels and emergency oxygen tanks.",
+        icon = RoomStuff.RoomSprite.NONE,
+        color = RoomStuff.RoomColor.Grey,
+        gridColor = RoomStuff.RoomColor.Grey,
+        canN = true, canS = true, canW = false, canE = false,
+    })
+    _add_room(world, floorID, "syndi_upper_stairs", Vector2(1, 2), {
         name = "Upper Deck Stairwell",
-        desc = "The top of the stairwell. A short corridor stretches ahead, dimly lit by emergency strips. The hum of the ship's engines is louder up here. A hatch to your side leads back down to the cargo hold.",
+        desc = "The top of the stairwell. The hum of the ship's engines is louder up here. A hatch leads back down to the cargo hold.",
+        icon = RoomStuff.RoomSprite.STAIRS,
+        color = RoomStuff.RoomColor.Grey,
+        gridColor = RoomStuff.RoomColor.Grey,
+        canN = true, canS = false, canW = false, canE = false,
+    })
+    world.addTransitions([floorID])
+
+static func build_lower(world, floorID):
+    _add_room(world, floorID, "syndi_lower_stairs", Vector2(0, 0), {
+        name = "Lower Deck Stairwell",
+        desc = "The bottom of the stairwell. A short corridor leads to a chamber ahead. The air is cool and still down here.",
         icon = RoomStuff.RoomSprite.STAIRS,
         color = RoomStuff.RoomColor.Grey,
         gridColor = RoomStuff.RoomColor.Grey,
         canN = false, canS = true, canW = false, canE = false,
     })
-    _add_room(world, floorID, "syndi_upper_teleporter", Vector2(0, 1), {
+    _add_room(world, floorID, "syndi_lower_teleporter", Vector2(0, 1), {
         name = "Teleporter Chamber",
         desc = "The chamber hums with contained energy. A circular platform sits in the center, ringed by four crystal conduits that pulse with a faint blue light. The air feels charged, making your hair stand on end. The platform looks intact and functional.",
         icon = RoomStuff.RoomSprite.IMPORTANT,
