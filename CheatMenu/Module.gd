@@ -57,6 +57,20 @@ func discoverModConfigs():
             continue
         var basePath = "res://Modules/" + mod.id + "/cheatMenu/"
 
+        if mod.id == "PhoenixRising":
+            var modBase = "res://Modules/" + mod.id + "/"
+            Log.print("CheatMenu: testing loads for PhoenixRising:")
+            var ts = load(modBase + "Module.gd")
+            Log.print("CheatMenu:   Module.gd => " + str(ts != null))
+            ts = load(modBase + "worldEdit.gd")
+            Log.print("CheatMenu:   worldEdit.gd => " + str(ts != null))
+            ts = load(modBase + "extender.gd")
+            Log.print("CheatMenu:   extender.gd => " + str(ts != null))
+            ts = load(basePath + "mod_info.gd")
+            Log.print("CheatMenu:   cheatMenu/mod_info.gd => " + str(ts != null))
+            ts = load(basePath + "locations.gd")
+            Log.print("CheatMenu:   cheatMenu/locations.gd => " + str(ts != null))
+
         var infoPath = basePath + "mod_info.gd"
         var infoScript = load(infoPath)
         if infoScript == null or not infoScript.has_method("get_mod_info"):
