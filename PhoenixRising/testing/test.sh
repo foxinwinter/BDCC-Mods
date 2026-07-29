@@ -11,7 +11,7 @@ if [ -d "$cheatSrc" ]; then
     tmp=$(mktemp -d)
     trap 'rm -rf "$tmp"' EXIT
 
-    find "$cheatSrc" -type f \( -name '*.gd' -o -name '*.tscn' \) | while read -r f; do
+    find "$cheatSrc" -type f \( -name '*.gd' -o -name '*.tscn' -o -name '*.json' \) | while read -r f; do
         rel="${f#"$cheatSrc"}"
         rel="${rel#/}"
         mkdir -p "$tmp/Modules/CheatMenu/$(dirname "$rel")"

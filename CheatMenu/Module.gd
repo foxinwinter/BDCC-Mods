@@ -43,7 +43,6 @@ func getModItemRegistrations():
     return _modItemRegistrations
 
 func postInit():
-    Log.print("CheatMenu: postInit called, modules=" + str(GlobalRegistry.getModules().size()))
     discoverModConfigs()
 
     Console.addCommand("cheatmenu", self, "consoleOpenCheatMenu", [], "Open the cheat menu")
@@ -53,57 +52,66 @@ func postInit():
     Console.addCommand("giveitem",  self, "consoleGiveItem",      ["itemID", "amount"], "Give an item")
 
 func discoverModConfigs():
-    Log.print("CheatMenu: discoverModConfigs starting")
     var modules = GlobalRegistry.getModules()
+    var f = File.new()
     for modID in modules:
         var mod = modules[modID]
         if mod.id == "CheatMenu":
             continue
         var basePath = "res://Modules/" + mod.id + "/cheatMenu/"
 
-        var infoPath = basePath + "mod_info.gd"
-        var infoScript = load(infoPath)
-        if infoScript == null or not infoScript.has_method("get_mod_info"):
+        var infoPath = basePath + "info.json"
+        if not f.file_exists(infoPath):
             continue
-        if infoScript == null or not infoScript.has_method("get_mod_info"):
+        var infoText = readJsonFile(f, infoPath)
+        if infoText == null:
             continue
+        var modName = infoText.get("mod_name", mod.id)
 
-        var info = infoScript.get_mod_info()
-        var modName = info.get("mod_name", mod.id)
+        var locPath = basePath + "locations.json"
+        if f.file_exists(locPath):
+            var locData = readJsonFile(f, locPath)
+            if locData != null:
+                var subName = locData.get("sub_area_name", modName)
+                var rooms = locData.get("rooms", [])
+                var aliases = locData.get("aliases", {})
+                if rooms.size() > 0:
+                    registerTeleportSubArea("Mods", subName, rooms)
+                    for rid in aliases:
+                        registerRoomAlias(rid, aliases[rid])
 
-        var locPath = basePath + "locations.gd"
-        var locScript = load(locPath)
-        if locScript != null and locScript.has_method("get_locations"):
-            var locs = locScript.get_locations()
-            var subName = locs.get("sub_area_name", modName)
-            var rooms = locs.get("rooms", [])
-            var aliases = locs.get("aliases", {})
-            if rooms.size() > 0:
-                registerTeleportSubArea("Mods", subName, rooms)
-                for rid in aliases:
-                    registerRoomAlias(rid, aliases[rid])
-
-        var itemPath = basePath + "items.gd"
-        var itemScript = load(itemPath)
-        if itemScript != null and itemScript.has_method("get_items"):
-            var items = itemScript.get_items()
-            for cat in items:
-                if not _modItemRegistrations.has(cat):
-                    _modItemRegistrations[cat] = []
-                for subName in items[cat]:
-                    var subItems = items[cat][subName]
-                    var found = false
-                    for existing in _modItemRegistrations[cat]:
-                        if existing[0] == subName:
-                            for itemID in subItems:
-                                if not existing[1].has(itemID):
-                                    existing[1].append(itemID)
-                            found = true
-                            break
-                    if not found:
-                        _modItemRegistrations[cat].append([subName, subItems.duplicate()])
+        var itemPath = basePath + "items.json"
+        if f.file_exists(itemPath):
+            var items = readJsonFile(f, itemPath)
+            if items != null:
+                for cat in items:
+                    if not _modItemRegistrations.has(cat):
+                        _modItemRegistrations[cat] = []
+                    for subName in items[cat]:
+                        var subItems = items[cat][subName]
+                        var found = false
+                        for existing in _modItemRegistrations[cat]:
+                            if existing[0] == subName:
+                                for itemID in subItems:
+                                    if not existing[1].has(itemID):
+                                        existing[1].append(itemID)
+                                found = true
+                                break
+                        if not found:
+                            _modItemRegistrations[cat].append([subName, subItems.duplicate()])
 
         Log.print("CheatMenu: Discovered config for " + modName)
+
+func readJsonFile(f, path):
+    var err = f.open(path, File.READ)
+    if err != OK:
+        return null
+    var text = f.get_as_text()
+    f.close()
+    var result = parse_json(text)
+    if typeof(result) != TYPE_DICTIONARY:
+        return null
+    return result
 
 func consoleOpenCheatMenu(_args = []):
     GM.main.runScene("CheatMenuScene")

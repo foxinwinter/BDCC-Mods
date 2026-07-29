@@ -10,7 +10,7 @@ src="mod/PhoenixRising"
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT
 
-find "$src" -type f \( -name '*.gd' -o -name '*.tscn' \) | while read -r f; do
+find "$src" -type f \( -name '*.gd' -o -name '*.tscn' -o -name '*.json' \) | while read -r f; do
     rel="${f#"$src"}"
     rel="${rel#/}"
     mkdir -p "$tmp/Modules/PhoenixRising/$(dirname "$rel")"
