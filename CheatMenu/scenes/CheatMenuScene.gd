@@ -72,6 +72,7 @@ var _roomAliases = {
 }
 
 var _selectedArea = ""
+var _selectedSubArea = ""
 var _selectedCategory = ""
 var _selectedSubCategory = ""
 var _selectedStat = ""
@@ -90,7 +91,35 @@ var _itemSubCategories = {
         ["Gags", ["ballgag", "caninedildogag", "ringgag", "basketmuzzle"]],
         ["Collars", ["inmatecollar", "oldcollar"]],
         ["Misc", ["HypnovisorMk1", "HypnovisorDisabled"]],
-    ]
+    ],
+    "Clothes": [
+        ["Uniforms", ["EngineerClothes", "NurseClothes", "LabcoatOutfit", "CasualClothes", "LatexSuit", "Leotard", "LeatherJacket", "PuppyCorset"]],
+        ["Inmate Uniforms", ["inmateuniform", "inmateuniformHighsec", "inmateuniformSexDeviant"]],
+        ["Armor", ["GuardArmor", "GuardArmorRiot", "SyndiArmor", "MirriArmor", "OfficialClothes", "OfficialClothesRed", "OfficialClothesGreen"]],
+        ["Socket Gear", ["SocketCrotchCover", "SocketBackpack", "SocketVisor", "SocketVisorUp", "SocketArmor"]],
+        ["Strapons", ["Strapon", "StraponCanine", "StraponDragon", "StraponFeeldoe", "StraponFeline", "StraponHorse", "StraponOvi", "StraponOviFeeldoe"]],
+        ["Bras", ["plainBra", "LaceBra"]],
+        ["Panties & Briefs", ["plainPanties", "LacePanties", "MirriPanties", "plainBriefs", "sportyBriefs"]],
+        ["Tops", ["plainUndershirt", "sportyTankTop", "sportyTop"]],
+        ["Breast Pumps", ["BreastPump", "BreastPumpAdvanced"]],
+        ["Remove / Hide", ["AlexExoskeleton", "AlexSpine", "AndroidSuit", "EngineerClothesAlex", "EngineerClothesOld", "NurseClothesAlt", "LabcoatOutfitAlt", "LabcoatOutfitMale", "UsedCondom"]],
+    ],
+    "Underwear": [
+        ["Portal Panties", ["PortalPanties", "PortalPantiesUnlocked"]],
+    ],
+    "Medical": [
+        ["Consumables", ["appleitem", "EnergyDrink"]],
+        ["Hygiene", ["Soap", "lube"]],
+        ["Contraceptives", ["Condom", "QualityCondom", "PregnancyTest", "BirthControlPill", "BreederPill"]],
+        ["Pills", ["AnaphrodisiacPill", "painkillers", "HeatPill", "ObeyPill", "FetishGainPill", "EggBigEggsPill", "EggGrowthPill"]],
+        ["TF Pills", ["TFPill", "TFUndoPill", "TFAcceleratePill", "TFApplyPill"]],
+        ["Eggs", ["PlantEgg", "PlantEggEliza", "LatexEgg"]],
+    ],
+    "Generic": [
+        ["Dildos", ["HorsecockDildo", "CanineDildo"]],
+        ["Keys", ["KeyholderKeyUnlock", "restraintkey"]],
+        ["Other", ["PermanentMarker", "TentNeuroLink", "WorkCredit", "EggGeneric"]],
+    ],
 }
 
 var _hiddenItemIDs = [
@@ -99,10 +128,12 @@ var _hiddenItemIDs = [
 
 var _removedFromCategory = {
     "BDSM": ["PortalPanties", "PortalPantiesUnlocked", "Fleshlight"],
+    "Underwear": ["plainBra", "LaceBra", "plainPanties", "LacePanties", "MirriPanties", "plainBriefs", "sportyBriefs", "plainUndershirt", "sportyTankTop", "sportyTop", "BreastPump", "BreastPumpAdvanced", "Strapon", "StraponCanine", "StraponDragon", "StraponFeeldoe", "StraponFeline", "StraponHorse", "StraponOvi", "StraponOviFeeldoe"],
 }
 
 func _init():
     sceneID = "CheatMenuScene"
+    _mergeModItems()
 
 func _initScene(_args = []):
     setState("main")
@@ -119,6 +150,8 @@ func _run():
             showTeleportAreas()
         "tp_room":
             showTeleportRooms()
+        "tp_subarea":
+            showSubAreaRooms()
         "items":
             showItemCategories()
         "items_credits":
@@ -192,19 +225,101 @@ func showMainMenu():
     addButton("Close",         "Close cheat menu",           "menu_close")
 
 func showTeleportAreas():
-    for area in cheatRooms.keys():
+    var cheatModule = GlobalRegistry.getModule("CheatMenu")
+    var mergedAreas = cheatRooms.duplicate(true)
+    if cheatModule != null:
+        var registered = cheatModule.getRegisteredTeleportCategories()
+        for area in registered:
+            if mergedAreas.has(area):
+                for rid in registered[area]:
+                    if not mergedAreas[area].has(rid):
+                        mergedAreas[area].append(rid)
+            else:
+                mergedAreas[area] = registered[area].duplicate()
+        var subAreas = cheatModule.getRegisteredTeleportSubAreas()
+        for area in subAreas:
+            if not mergedAreas.has(area):
+                mergedAreas[area] = []
+    for area in mergedAreas.keys():
         addButton(area, "", "tp_select_area", [area])
     addButton("Back", "", "menu_main")
 
 func showTeleportRooms():
-    var rooms = cheatRooms[_selectedArea]
+    var cheatModule = GlobalRegistry.getModule("CheatMenu")
+    var mergedAliases = _roomAliases.duplicate(true)
+    if cheatModule != null:
+        var registered = cheatModule.getRegisteredRoomAliases()
+        for rid in registered:
+            if not mergedAliases.has(rid):
+                mergedAliases[rid] = registered[rid]
+
+    if cheatModule != null:
+        var subAreas = cheatModule.getRegisteredTeleportSubAreas()
+        if subAreas.has(_selectedArea):
+            for sub in subAreas[_selectedArea].keys():
+                addButton(sub, "", "tp_select_subarea", [sub])
+            addButton("Back", "", "tp_area")
+            return
+
+    var rooms = []
+    if cheatRooms.has(_selectedArea):
+        rooms = cheatRooms[_selectedArea].duplicate()
+    if cheatModule != null:
+        var registered = cheatModule.getRegisteredTeleportCategories()
+        if registered.has(_selectedArea):
+            for rid in registered[_selectedArea]:
+                if not rooms.has(rid):
+                    rooms.append(rid)
+
     for room in rooms:
         var roomInfo = GM.world.getRoomByID(room)
         var name = roomInfo.getName() if roomInfo != null else room
-        if _roomAliases.has(room):
-            name = _roomAliases[room]
+        if mergedAliases.has(room):
+            name = mergedAliases[room]
         addButton(name, room, "tp_go", [room])
     addButton("Back", "", "tp_area")
+
+func showSubAreaRooms():
+    var cheatModule = GlobalRegistry.getModule("CheatMenu")
+    var mergedAliases = _roomAliases.duplicate(true)
+    if cheatModule != null:
+        var registered = cheatModule.getRegisteredRoomAliases()
+        for rid in registered:
+            if not mergedAliases.has(rid):
+                mergedAliases[rid] = registered[rid]
+
+    var subAreas = cheatModule.getRegisteredTeleportSubAreas()
+    var rooms = subAreas[_selectedArea][_selectedSubArea]
+
+    for room in rooms:
+        var roomInfo = GM.world.getRoomByID(room)
+        var name = roomInfo.getName() if roomInfo != null else room
+        if mergedAliases.has(room):
+            name = mergedAliases[room]
+        addButton(name, room, "tp_go", [room])
+    addButton("Back", "", "tp_area")
+
+func _mergeModItems():
+    var cheatModule = GlobalRegistry.getModule("CheatMenu")
+    if cheatModule == null or not cheatModule.has_method("getModItemRegistrations"):
+        return
+    var modItems = cheatModule.getModItemRegistrations()
+    for cat in modItems:
+        if not _itemSubCategories.has(cat):
+            _itemSubCategories[cat] = []
+        for sub in modItems[cat]:
+            var subName = sub[0]
+            var subItems = sub[1]
+            var found = false
+            for existingSub in _itemSubCategories[cat]:
+                if existingSub[0] == subName:
+                    for itemID in subItems:
+                        if not existingSub[1].has(itemID):
+                            existingSub[1].append(itemID)
+                    found = true
+                    break
+            if not found:
+                _itemSubCategories[cat].append([subName, subItems.duplicate()])
 
 func showItemCategories():
     var cats = getItemCategories()
@@ -428,7 +543,6 @@ func showUtilitiesMenu():
     addButton("Sleep (Next Day)",   "Advance to next morning", "util_sleep")
     addButton("+2 Hours",           "Advance time by 2 hours", "util_time", [2*60*60])
     addButton("+8 Hours",           "Advance time by 8 hours", "util_time", [8*60*60])
-    addButton("Open Character Creator", "Change appearance",   "util_charcreator")
     addButton("Encounters",         "Trigger slavery scenarios", "menu_encounters")
     addButton("Back", "", "menu_main")
 
@@ -529,6 +643,7 @@ func showPlayerHealMenu():
 func showPlayerMiscMenu():
     addButton("Reset Perks", "", "player_reset_perks")
     addButton("Reset Stats", "", "player_reset_stats")
+    addButton("Edit Character", "Change appearance", "util_charcreator")
     addButton("Back", "", "menu_player")
 
 func removeBadStatusEffects():
@@ -626,7 +741,11 @@ func _react(action, _args):
             setState("rel_list")
         "tp_select_area":
             _selectedArea = _args[0]
+            _selectedSubArea = ""
             setState("tp_room")
+        "tp_select_subarea":
+            _selectedSubArea = _args[0]
+            setState("tp_subarea")
         "tp_area":
             setState("tp_area")
         "tp_go":
@@ -781,9 +900,11 @@ func statAdd(statID, amount):
         sh.setStat(statID, newVal)
         addMessage(statID + " -> " + str(newVal))
     else:
-        var actual = min(amount, sh.getFreeStatPoints())
-        sh.increaseStatIfCan(statID, actual)
-        addMessage(statID + " +" + str(actual) + " (free: " + str(sh.getFreeStatPoints()) + ")")
+        var free = sh.getFreeStatPoints()
+        if free < amount:
+            sh.setLevel(sh.getLevel() + (amount - free))
+        sh.increaseStatIfCan(statID, amount)
+        addMessage(statID + " +" + str(amount))
     setState("stat_detail")
 
 func skillSet(skillID, level):

@@ -1,11 +1,11 @@
 extends WorldEditBase
 
 func _init():
-    id = "BDCC2WorldEdit"
+    id = "PhoenixRisingWorldEdit"
     isRegular = false
 
 func apply(world):
-    var ShipRooms = load("res://Modules/BDCC2/world/syndicateShip/rooms.gd")
+    var ShipRooms = load("res://Modules/PhoenixRising/world/syndicateShip/rooms.gd")
     ShipRooms.build(world, "CommandDeck")
     ShipRooms.build_upper(world, "SyndicateShipUpper")
     ShipRooms.build_lower(world, "SyndicateShipLower")
@@ -44,6 +44,16 @@ func _connect_interactions(world):
         room.connect("onEnter", self, "_on_lower_stairs_enter")
         room.connect("onReact", self, "_on_lower_stairs_react")
 
+    room = world.getRoomByID("syndi_lower_hall")
+    if room != null:
+        room.connect("onEnter", self, "_on_lower_hall_enter")
+        room.connect("onReact", self, "_on_lower_hall_react")
+
+    room = world.getRoomByID("syndi_lower_doorway")
+    if room != null:
+        room.connect("onEnter", self, "_on_lower_doorway_enter")
+        room.connect("onReact", self, "_on_lower_doorway_react")
+
     room = world.getRoomByID("syndi_shower")
     if room != null:
         room.connect("onEnter", self, "_on_shower_enter")
@@ -53,6 +63,11 @@ func _connect_interactions(world):
     if room != null:
         room.connect("onEnter", self, "_on_storage_enter")
         room.connect("onReact", self, "_on_storage_react")
+
+    room = world.getRoomByID("syndi_lower_placeholder")
+    if room != null:
+        room.connect("onEnter", self, "_on_empty_enter")
+        room.connect("onReact", self, "_on_empty_react")
 
     room = world.getRoomByID("syndi_captain")
     if room != null:
@@ -64,14 +79,14 @@ func _on_quarters_enter(room):
 
 func _on_quarters_react(_room, key):
     if key == "rest":
-        _room.runScene("BDCC2_ShipRestScene")
+        _room.runScene("PhoenixRising_ShipRestScene")
 
 func _on_canteen_enter(room):
     room.addButton("Eat", "Scrounge up a meal from ration packs and the replicator", "eat")
 
 func _on_canteen_react(_room, key):
     if key == "eat":
-        _room.runScene("BDCC2_ShipEatScene")
+        _room.runScene("PhoenixRising_ShipEatScene")
 
 func _on_cargo_stairs_down_enter(room):
     room.addButton("Go down", "Descend to the lower deck", "go_down")
@@ -103,9 +118,38 @@ func _on_shower_react(_room, key):
     if key == "shower":
         _room.runScene("TakingAShowerScene")
 
+func _on_lower_hall_enter(room):
+    room.addButton("Go through doorway", "Try to open the locked door to the north", "go_doorway")
+
+func _on_lower_hall_react(_room, key):
+    if key == "go_doorway":
+        if GM.pc.getInventory().hasItemID("bdcc2_lower_deck_key"):
+            GM.pc.setLocation("syndi_lower_doorway")
+            GM.main.reRun()
+        else:
+            GM.main.addMessage("The door is locked. You need a key.")
+
+func _on_lower_doorway_enter(room):
+    room.addButton("Go back", "Return to the main corridor", "go_back")
+
+func _on_lower_doorway_react(_room, key):
+    if key == "go_back":
+        GM.pc.setLocation("syndi_lower_hall")
+        GM.main.reRun()
+
+func _on_empty_enter(room):
+    room.addButton("Use cryopod", "Step into the old medical cryopod for healing", "use_cryopod")
+
+func _on_empty_react(_room, key):
+    if key == "use_cryopod":
+        _room.runScene("PhoenixRising_ShipCryopodScene")
+
 func _on_captain_enter(room):
-    var ch1complete = GM.main.getFlag("BDCC2.Ch1Complete", false)
-    var ch2complete = GM.main.getFlag("BDCC2.Ch2Complete", false)
+    room.addButton("Rest", "Lie down on the captain's bed and recover", "rest")
+    if not GM.pc.getInventory().hasItemID("bdcc2_lower_deck_key"):
+        room.addButton("Search desk", "Look through the captain's desk for anything useful", "search_desk")
+    var ch1complete = GM.main.getFlag("PhoenixRising.Ch1Complete", false)
+    var ch2complete = GM.main.getFlag("PhoenixRising.Ch2Complete", false)
     if not ch1complete:
         room.addButton("Tavi", "Talk to Tavi about the plan", "tavi_talk")
     elif not ch2complete:
@@ -114,36 +158,43 @@ func _on_captain_enter(room):
         room.addButton("Tavi", "Chat with Tavi", "tavi_talk")
 
 func _on_captain_react(_room, key):
+    if key == "rest":
+        _room.runScene("PhoenixRising_ShipRestScene")
+        return
+    if key == "search_desk":
+        GM.pc.getInventory().addItemID("bdcc2_lower_deck_key")
+        GM.main.addMessage("You found a rusted key labeled 'LOWER DECK ACCESS'.")
+        return
     if key == "tavi_talk":
-        var morningDone = GM.main.getFlag("BDCC2.Ch1_MorningDone", false)
-        var shipLifeDone = GM.main.getFlag("BDCC2.Ch1_ShipLifeDone", false)
-        var nightWatchDone = GM.main.getFlag("BDCC2.Ch1_NightWatchDone", false)
-        var arrived = GM.main.getFlag("BDCC2.Ch1_ArrivalDone", false)
+        var morningDone = GM.main.getFlag("PhoenixRising.Ch1_MorningDone", false)
+        var shipLifeDone = GM.main.getFlag("PhoenixRising.Ch1_ShipLifeDone", false)
+        var nightWatchDone = GM.main.getFlag("PhoenixRising.Ch1_NightWatchDone", false)
+        var arrived = GM.main.getFlag("PhoenixRising.Ch1_ArrivalDone", false)
         if not morningDone:
-            _room.runScene("BDCC2_Ch1_MorningAfter")
+            _room.runScene("PhoenixRising_Ch1_MorningAfter")
             return
         if not shipLifeDone:
-            _room.runScene("BDCC2_Ch1_ShipLife")
+            _room.runScene("PhoenixRising_Ch1_ShipLife")
             return
         if not nightWatchDone:
-            _room.runScene("BDCC2_Ch1_NightWatch")
+            _room.runScene("PhoenixRising_Ch1_NightWatch")
             return
         if not arrived:
-            _room.runScene("BDCC2_Ch1_Arrival")
+            _room.runScene("PhoenixRising_Ch1_Arrival")
             return
-        var toFarmDone = GM.main.getFlag("BDCC2.Ch2_ToFarmDone", false)
-        var meetNovaDone = GM.main.getFlag("BDCC2.Ch2_MeetNovaDone", false)
-        var recruitDone = GM.main.getFlag("BDCC2.Ch2_RecruitDone", false)
+        var toFarmDone = GM.main.getFlag("PhoenixRising.Ch2_ToFarmDone", false)
+        var meetNovaDone = GM.main.getFlag("PhoenixRising.Ch2_MeetNovaDone", false)
+        var recruitDone = GM.main.getFlag("PhoenixRising.Ch2_RecruitDone", false)
         if not toFarmDone:
-            _room.runScene("BDCC2_Ch2_ToTheFarm")
+            _room.runScene("PhoenixRising_Ch2_ToTheFarm")
             return
         if not meetNovaDone:
-            _room.runScene("BDCC2_Ch2_MeetNova")
+            _room.runScene("PhoenixRising_Ch2_MeetNova")
             return
         if not recruitDone:
-            _room.runScene("BDCC2_Ch2_RecruitNova")
+            _room.runScene("PhoenixRising_Ch2_RecruitNova")
             return
-        _room.runScene("BDCC2_TaviCommsScene")
+        _room.runScene("PhoenixRising_TaviCommsScene")
 
 func _on_cargo_stairs_enter(room):
     room.addButton("Go up", "Climb the stairs to the upper deck", "go_up")

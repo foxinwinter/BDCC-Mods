@@ -1,11 +1,10 @@
 extends SceneBase
 
 func _init():
-    sceneID = "BDCC2_Ch1_ShipLife"
+    sceneID = "PhoenixRising_Ch1_ShipLife"
 
 func _run():
     if state == "":
-        GM.pc.setLocation("syndi_quarters")
         aimCameraAndSetLocName("syndi_quarters")
         addCharacter("tavi")
         playAnimation(StageScene.Duo, "sit", {npc="tavi"})
@@ -15,13 +14,13 @@ func _run():
 
         saynn("[say=pc]Problem?[/say]")
 
-        saynn("[say=tavi]Syndicate nav数据库。 It's encrypted. Not the usual kind either — this is military-grade. They didn't want anyone knowing where this ship has been.[/say]")
+        saynn("[say=tavi]Syndicate navigation~. Encrypted, cutie. Not the usual kind either — this is military-grade. They didn't want anyone knowing where this ship has been.. or what we might do on it~.[/say]")
 
         saynn("[say=pc]Can you crack it?[/say]")
 
         saynn("She taps her chin.")
 
-        saynn("[say=tavi]Give me an hour and a quiet room. Maybe.[/say]")
+        saynn("[say=tavi]Give me an hour and a quiet room.. Maybe less if you keep me company~.[/say]")
 
         addButton("Help her", "Lend a hand with the decryption", "help")
         addButton("Leave her to it", "Let her work and explore on your own", "explore")
@@ -35,11 +34,11 @@ func _run():
 
         saynn("Tavi lets out a low whistle.")
 
-        saynn("[say=tavi]Well. That's useful.[/say]")
+        saynn("[say=tavi]Well~. That's useful.. Very useful~.[/say]")
 
         saynn("She looks at you, a glint in her eye.")
 
-        saynn("[say=tavi]Good work. We make a decent team.[/say]")
+        saynn("[say=tavi]Good work, owner~. We make a decent team.. in more ways than one~.[/say]")
 
         saynn("There's something warm in the way she says it.")
 
@@ -52,17 +51,17 @@ func _run():
 
         saynn("When you circle back to the quarters, Tavi is exactly where you left her, datapad in hand, but there's a satisfied smirk on her face.")
 
-        saynn("[say=tavi]Cracked it. Syndicate nav logs. Full of goodies.[/say]")
+        saynn("[say=tavi]Cracked it~. Syndicate nav logs. Full of goodies.. Almost as good as the view from here~.[/say]")
 
         saynn("She tosses you a ration bar from a freshly opened crate.")
 
-        saynn("[say=tavi]Breakfast is on me.[/say]")
+        saynn("[say=tavi]Breakfast is on me, cutie~. Don't get used to it though — I might want something else for payment later~.[/say]")
 
         addButton("Nice work", "Catch the bar and sit down", "end_scene")
 
 func _react(_action, _args):
     if _action == "end_scene":
-        GM.main.setFlag("BDCC2.Ch1_ShipLifeDone", true)
+        GM.main.setFlag("PhoenixRising.Ch1_ShipLifeDone", true)
         endScene()
         return
     setState(_action)

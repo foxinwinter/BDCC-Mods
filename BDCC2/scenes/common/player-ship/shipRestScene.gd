@@ -1,7 +1,7 @@
 extends "res://Scenes/SceneBase.gd"
 
 func _init():
-    sceneID = "BDCC2_ShipRestScene"
+    sceneID = "PhoenixRising_ShipRestScene"
 
 func _run():
     if state == "":

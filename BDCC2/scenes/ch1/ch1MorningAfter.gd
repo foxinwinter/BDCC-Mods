@@ -1,7 +1,7 @@
 extends SceneBase
 
 func _init():
-    sceneID = "BDCC2_Ch1_MorningAfter"
+    sceneID = "PhoenixRising_Ch1_MorningAfter"
 
 func _run():
     if state == "":
@@ -15,31 +15,31 @@ func _run():
 
         saynn("Tavi is in the pilot's seat, her tail curling lazily as she watches the stars streak by. She notices you stirring and glances back.")
 
-        saynn("[say=tavi]Morning, sleepyhead~. You were out for a while.[/say]")
+        saynn("[say=tavi]Morning, sleepyhead~. You were out for a while.. I missed having you watch me~.[/say]")
 
         saynn("You sit up slowly, rubbing your neck.")
 
         saynn("[say=pc]How long?[/say]")
 
-        saynn("[say=tavi]Ten hours. Give or take. You needed it.[/say]")
+        saynn("[say=tavi]Ten hours. Give or take. You needed it.. I almost started touching myself to pass the time~.[/say]")
 
         saynn("She swivels her chair to face you.")
 
-        saynn("[say=tavi]We're in the clear. No pursuit. No alerts. Syndicate's too busy fighting AlphaCorp over the prison to care about one missing transport.[/say]")
+        saynn("[say=tavi]We're in the clear, cutie~. No pursuit. No alerts. Syndicate's too busy fighting AlphaCorp over the prison to care about one missing transport.. or what we get up to on it~.[/say]")
 
         saynn("[say=pc]So what now?[/say]")
 
         saynn("Tavi's ears flick back. She's been thinking about this.")
 
-        saynn("[say=tavi]We need allies. Resources. A real plan. I've got a name — someone who owes me. Used to be AlphaCorp. Got out. Set up shop on a resort colony called Azure Cove.[/say]")
+        saynn("[say=tavi]We need allies. Resources. A real plan~. I've got a name — someone who owes me. Used to be AlphaCorp. Got out. Set up shop on a resort colony called Azure Cove.[/say]")
 
         saynn("[say=pc]Who?[/say]")
 
-        saynn("[say=tavi]Nova. She was a guard back at BDCC. But she's not like the others. She helped me more than once. When the shooting started, she held the medical wing instead of hunting inmates. AlphaCorp gave her a medal and enough creds to disappear.[/say]")
+        saynn("[say=tavi]Nova~. She was a guard back at BDCC. But she's not like the others. She helped me more than once. When the shooting started, she held the medical wing instead of hunting inmates. AlphaCorp gave her a medal and enough creds to disappear.. Lucky her~.[/say]")
 
         saynn("Tavi pulls up a nav plot on the display. A blue dot pulses at the edge of the sector.")
 
-        saynn("[say=tavi]Azure Cove. Three days at current speed. If anyone's worth bringing into this, it's her.[/say]")
+        saynn("[say=tavi]Azure Cove~. Three days at current speed. If anyone's worth bringing into this, it's her.. Gives us plenty of time to.. bond~.[/say]")
 
         addButton("Set course", "Head for Azure Cove", "set_course")
 
@@ -48,11 +48,11 @@ func _run():
         playAnimation(StageScene.Duo, "stand", {npc="tavi"})
         saynn("Tavi taps the console. The ship's engines hum as it adjusts course.")
 
-        saynn("[say=tavi]Course locked. We'll have time to rest, repair, and figure out our approach.[/say]")
+        saynn("[say=tavi]Course locked~. We'll have time to.. rest. Repair. And figure out our approach.. in more ways than one~.[/say]")
 
         saynn("She stretches, her spine cracking audibly.")
 
-        saynn("[say=tavi]Make yourself at home. It's not much, but it's ours now.[/say]")
+        saynn("[say=tavi]Make yourself at home, owner~. It's not much, but it's ours now.. And I plan on making it feel real nice~.[/say]")
 
         saynn("She offers you a small, genuine smile. For a moment, the weight of everything — the prison, the captain, the escape — seems to lift.")
 
@@ -60,7 +60,7 @@ func _run():
 
 func _react(_action, _args):
     if _action == "end_scene":
-        GM.main.setFlag("BDCC2.Ch1_MorningDone", true)
+        GM.main.setFlag("PhoenixRising.Ch1_MorningDone", true)
         endScene()
         return
     setState(_action)

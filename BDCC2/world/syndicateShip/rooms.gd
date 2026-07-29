@@ -109,21 +109,53 @@ static func build_upper(world, floorID):
     world.addTransitions([floorID])
 
 static func build_lower(world, floorID):
-    _add_room(world, floorID, "syndi_lower_stairs", Vector2(0, 0), {
-        name = "Lower Deck Stairwell",
-        desc = "The bottom of the stairwell. A short corridor leads to a chamber ahead. The air is cool and still down here.",
+    _add_room(world, floorID, "syndi_lower_stairs", Vector2(0, 2), {
+        name = "Stairwell",
+        desc = "A narrow staircase leading up to the cargo hold. The air is cool and still down here.",
         icon = RoomStuff.RoomSprite.STAIRS,
         color = RoomStuff.RoomColor.Grey,
         gridColor = RoomStuff.RoomColor.Grey,
-        canN = false, canS = true, canW = false, canE = false,
+        canN = false, canS = false, canW = false, canE = true,
     })
-    _add_room(world, floorID, "syndi_lower_teleporter", Vector2(0, 1), {
-        name = "Teleporter Chamber",
-        desc = "The chamber hums with contained energy. A circular platform sits in the center, ringed by four crystal conduits that pulse with a faint blue light. The air feels charged, making your hair stand on end. The platform looks intact and functional.",
+    _add_room(world, floorID, "syndi_lower_hall", Vector2(1, 2), {
+        name = "Main Corridor",
+        desc = "The main corridor of the lower deck. Pipes and conduits line the ceiling.",
+        icon = RoomStuff.RoomSprite.NONE,
+        color = RoomStuff.RoomColor.Grey,
+        gridColor = RoomStuff.RoomColor.Grey,
+        canW = true, canE = true, canS = true, canN = false,
+    })
+    _add_room(world, floorID, "syndi_lower_placeholder", Vector2(2, 2), {
+        name = "Empty Room",
+        desc = "An empty room. Bare walls and a dusty floor.",
+        icon = RoomStuff.RoomSprite.NONE,
+        color = RoomStuff.RoomColor.Grey,
+        gridColor = RoomStuff.RoomColor.Grey,
+        canW = true, canN = false, canS = false, canE = false,
+    })
+    _add_room(world, floorID, "syndi_lower_engine", Vector2(1, 3), {
+        name = "Engine Room",
+        desc = "Engines, conduits, and junction boxes cover every wall. The hum of the ship's reactor is loudest here.",
+        icon = RoomStuff.RoomSprite.COMPUTER,
+        color = RoomStuff.RoomColor.Red,
+        gridColor = RoomStuff.RoomColor.Red,
+        canN = true, canS = false, canW = false, canE = false,
+    })
+    _add_room(world, floorID, "syndi_lower_doorway", Vector2(1, 1), {
+        name = "Doorway",
+        desc = "A heavy locked door blocks the way south. A keyhole sits below the handle.",
+        icon = RoomStuff.RoomSprite.NONE,
+        color = RoomStuff.RoomColor.Grey,
+        gridColor = RoomStuff.RoomColor.Grey,
+        canN = true, canS = false, canW = false, canE = false,
+    })
+    _add_room(world, floorID, "syndi_lower_teleporter", Vector2(1, 0), {
+        name = "Teleporter Room",
+        desc = "A circular platform hums with contained energy. The air feels charged.",
         icon = RoomStuff.RoomSprite.IMPORTANT,
         color = RoomStuff.RoomColor.Blue,
         gridColor = RoomStuff.RoomColor.Blue,
-        canN = true, canS = false, canW = false, canE = false,
+        canS = true, canN = false, canW = false, canE = false,
     })
     world.addTransitions([floorID])
 

@@ -1,7 +1,7 @@
 extends SceneBase
 
 func _init():
-    sceneID = "BDCC2_Ch1_Arrival"
+    sceneID = "PhoenixRising_Ch1_Arrival"
 
 func _run():
     if state == "":
@@ -15,21 +15,21 @@ func _run():
 
         saynn("Tavi stands at the controls, her ears perked forward as she scans the approach data.")
 
-        saynn("[say=tavi]There she is. Resort colony, population two hundred thousand. AlphaCorp nominal presence — a small consulate, nothing more. The Syndicate keeps a few agents here too, but they're subtle. It's neutral ground, more or less.[/say]")
+        saynn("[say=tavi]There she is~. Azure Cove. Resort colony, population two hundred thousand. AlphaCorp nominal presence — a small consulate, nothing more. The Syndicate keeps a few agents here too, but they're subtle. It's neutral ground, more or less.. Perfect for what we have in mind~.[/say]")
 
         saynn("She zooms in on the surface. A coastal city sprawls along the edge of a turquoise sea.")
 
-        saynn("[say=tavi]Nova's farm is on the outskirts. Dawfort Creamery. She bought a biodome with the creds AlphaCorp gave her and turned it into a retreat.[/say]")
+        saynn("[say=tavi]Nova's farm is on the outskirts~. Dawfort Creamery. She bought a biodome with the creds AlphaCorp gave her and turned it into a retreat.. Maybe we can get some ideas for our own little place~.[/say]")
 
         saynn("[say=pc]You think she'll help us?[/say]")
 
         saynn("Tavi considers the question carefully.")
 
-        saynn("[say=tavi]Nova's.. practical. She's not the type to join a lost cause out of sentiment. But she owes me, and she's got no love for AlphaCorp anymore. If we can show her this is worth her while, she'll listen.[/say]")
+        saynn("[say=tavi]Nova's.. practical, cutie~. She's not the type to join a lost cause out of sentiment. But she owes me, and she's got no love for AlphaCorp anymore. If we can show her this is worth her while, she'll listen.. I'm very good at showing people what they want~.[/say]")
 
         saynn("She turns to face you.")
 
-        saynn("[say=tavi]We'll need more than a sob story though. We need leverage. A plan. Something that makes helping us better than ignoring us.[/say]")
+        saynn("[say=tavi]We'll need more than a sob story though, dear~. We need leverage. A plan. Something that makes helping us better than ignoring us.. But first.. maybe a little celebration~?[/say]")
 
         addButton("We'll figure it out", "Trust that you can convince her", "convince")
         addButton("What does she owe you?", "Ask about Nova and Tavi's history", "history")
@@ -39,17 +39,17 @@ func _run():
         playAnimation(StageScene.Duo, "stand", {npc="tavi"})
         saynn("Tavi's ears flick back. She's quiet for a moment.")
 
-        saynn("[say=tavi]She covered for me. Back in the prison. More than once. I was doing things I shouldn't have been — sneaking into restricted areas, hacking the systems. Nova knew. She could have turned me in, but she didn't.[/say]")
+        saynn("[say=tavi]She covered for me, owner~. Back in the prison. More than once. I was doing things I shouldn't have been — sneaking into restricted areas, hacking the systems.. getting into all sorts of trouble~. Nova knew. She could have turned me in, but she didn't.[/say]")
 
         saynn("[say=pc]Why not?[/say]")
 
         saynn("Tavi shrugs.")
 
-        saynn("[say=tavi]Maybe she saw something worth protecting. Maybe she just didn't like the captain. Either way, I owe her. And Nova's the type who keeps track of debts.[/say]")
+        saynn("[say=tavi]Maybe she saw something worth protecting~. Maybe she just didn't like the captain. Either way, I owe her. And Nova's the type who keeps track of debts.. Just like I keep track of what you do to me~.[/say]")
 
         saynn("She offers a wry smile.")
 
-        saynn("[say=tavi]Good news is, she's not the type to hold it over you either. If we sit down and talk to her straight, she'll hear us out.[/say]")
+        saynn("[say=tavi]Good news is, she's not the type to hold it over you either~. If we sit down and talk to her straight, she'll hear us out. And if that doesn't work.. well, I've got other skills~.[/say]")
 
         addButton("Alright. Let's do this.", "Prepare to land", "prepare_landing")
 
@@ -58,11 +58,11 @@ func _run():
         playAnimation(StageScene.Duo, "stand", {npc="tavi"})
         saynn("Tavi nods slowly.")
 
-        saynn("[say=tavi]Yeah. We will.[/say]")
+        saynn("[say=tavi]Yeah~. We will. Together~.[/say]")
 
         saynn("She taps the console and the ship begins its descent sequence. The sky shifts from black to blue as Azure Cove's atmosphere embraces the hull.")
 
-        saynn("[say=tavi]One thing at a time. First, we find Nova. Then we figure out the rest.[/say]")
+        saynn("[say=tavi]One thing at a time, dear~. First, we find Nova. Then we figure out the rest.. Then we find a nice private spot to.. unwind~.[/say]")
 
         addButton("Let's land", "Begin the approach", "prepare_landing")
 
@@ -73,17 +73,17 @@ func _run():
 
         saynn("Tavi's hands move across the controls with practiced ease.")
 
-        saynn("[say=tavi]Dropping a request for a landing pad now. Using our stolen Syndicate transponder — they'll flag it as a civilian transport. Should be enough to get us down.[/say]")
+        saynn("[say=tavi]Dropping a request for a landing pad now~. Using our stolen Syndicate transponder — they'll flag it as a civilian transport. Should be enough to get us down.. And if not, I can be very.. persuasive~.[/say]")
 
         saynn("The comms crackle. A cheerful automated voice grants clearance for landing zone Delta-3.")
 
         saynn("Tavi glances at you, a spark of anticipation in her eyes.")
 
-        saynn("[say=tavi]Welcome to Azure Cove. Try not to start any riots.[/say]")
+        saynn("[say=tavi]Welcome to Azure Cove, owner~. Try not to start any riots.. unless it's in bed~.[/say]")
 
         saynn("She grins.")
 
-        saynn("[say=tavi]At least, not until I tell you to.[/say]")
+        saynn("[say=tavi]At least, not until I tell you to~. Or unless you beg nicely~.[/say]")
 
         addButton("End Chapter 1", "Touch down on Azure Cove", "end_chapter")
 
@@ -94,8 +94,8 @@ func _run():
 
         saynn("[b]End of Chapter 1.[/b]")
 
-        GM.main.setFlag("BDCC2.Ch1_ArrivalDone", true)
-        GM.main.setFlag("BDCC2.Ch1Complete", true)
+        GM.main.setFlag("PhoenixRising.Ch1_ArrivalDone", true)
+        GM.main.setFlag("PhoenixRising.Ch1Complete", true)
         addButton("Continue", "Step onto Azure Cove", "end_scene")
 
 func _react(_action, _args):

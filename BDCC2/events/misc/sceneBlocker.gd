@@ -1,13 +1,13 @@
 extends EventBase
 
 func _init():
-    id = "BDCC2SceneBlocker"
+    id = "PhoenixRisingSceneBlocker"
 
 func registerTriggers(es):
     es.addTrigger(self, Trigger.WakeUpInCell)
 
 func react(_triggerID, _args):
-    if not _isBDCC2Active():
+    if not _isPhoenixRisingActive():
         return false
     if getFlag("RahiModule.rahi3SceneHappened"):
         return false
@@ -20,7 +20,7 @@ func react(_triggerID, _args):
 func getPriority():
     return 6
 
-func _isBDCC2Active():
+func _isPhoenixRisingActive():
     if GM.main == null:
         return false
     var hasKillEnding = GM.main.getFlag("TaviModule.Ch7KillEnding", false)

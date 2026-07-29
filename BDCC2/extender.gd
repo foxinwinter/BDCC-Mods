@@ -3,7 +3,7 @@ extends GameExtender
 var _firstRun = true
 
 func _init():
-    id = "BDCC2"
+    id = "PhoenixRising"
 
 func register(_GES):
     _GES.register(self, ExtendGame.pcUpdateNonBattleEffects)
@@ -18,9 +18,16 @@ func pcUpdateNonBattleEffects(_pc):
         return
     if _firstRun:
         _firstRun = false
-        if not GM.main.getFlag("BDCC2.TeleportedToShip", false):
-            GM.main.setFlag("BDCC2.TeleportedToShip", true)
+        if not GM.main.getFlag("PhoenixRising.TeleportedToShip", false):
+            _removeCollars()
+            GM.main.setFlag("PhoenixRising.TeleportedToShip", true)
             GM.pc.setLocation("syndi_captain")
             GM.world.aimCamera("syndi_captain", true)
             GM.main.reRun()
             return
+
+func _removeCollars():
+    GM.pc.getInventory().removeItemFromSlot(InventorySlot.Neck)
+    var tavi = GM.main.getCharacter("tavi")
+    if tavi != null:
+        tavi.getInventory().removeItemFromSlot(InventorySlot.Neck)

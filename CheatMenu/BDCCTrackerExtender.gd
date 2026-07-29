@@ -14,6 +14,7 @@ func register(_GES:GameExtenderSystem):
     _GES.register(self, ExtendGame.pcUpdateNonBattleEffects)
     Log.print("CheatMenu extender hooks registered")
     call_deferred("_ensureCheatButton")
+    call_deferred("_discoverModConfigsDeferred")
 
 func pcUpdateNonBattleEffects(_pc:Player):
     if _cheatButtonAdded:
@@ -51,6 +52,20 @@ func pcProcessTime(_pc:Player, _seconds):
 func pcProcessBattleTurn(_pc:Player):
     if godmode:
         healPC(_pc)
+
+func _discoverModConfigsDeferred():
+    var modules = GlobalRegistry.getModules()
+    Log.print("CheatMenu: _discoverModConfigsDeferred modules=" + str(modules.size()))
+    if modules == null or not modules.has("CheatMenu"):
+        Log.printerr("CheatMenu: module not found")
+        return
+    var cheatMod = modules["CheatMenu"]
+    Log.print("CheatMenu: cheatMod=" + str(cheatMod))
+    if cheatMod != null and cheatMod.has_method("discoverModConfigs"):
+        Log.print("CheatMenu: calling discoverModConfigs")
+        cheatMod.discoverModConfigs()
+    else:
+        Log.printerr("CheatMenu: discoverModConfigs method not found")
 
 func _openCM():
     GM.main.runScene("CheatMenuScene")
