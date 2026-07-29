@@ -1,3 +1,2 @@
-static func get_items():
-    return {
-    }
+func get_items():
+    return {}

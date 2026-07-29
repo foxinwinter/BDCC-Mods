@@ -1,4 +1,4 @@
-static func get_locations():
+func get_locations():
     return {
         "sub_area_name": "Phoenix Rising",
         "rooms": [
