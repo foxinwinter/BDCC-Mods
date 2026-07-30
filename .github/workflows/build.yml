@@ -3,7 +3,6 @@ name: Build PhoenixRising + CheatMenu
 on:
   push:
     branches: [main]
-    tags: ["v*"]
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -13,6 +12,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Read versions
+        id: versions
+        run: |
+          echo "pr=$(jq -r .phoenixRising versions.json)" >> $GITHUB_OUTPUT
+          echo "cm=$(jq -r .cheatMenu versions.json)" >> $GITHUB_OUTPUT
 
       - name: Build PhoenixRising
         run: |
@@ -24,7 +29,7 @@ jobs:
             cp "$f" "$tmp/Modules/PhoenixRising/$rel"
           done
           cd "$tmp"
-          zip -r "$OLDPWD/PhoenixRising.zip" .
+          zip -r "$OLDPWD/PhoenixRising_v${{ steps.versions.outputs.pr }}.zip" .
 
       - name: Build CheatMenu
         run: |
@@ -35,30 +40,43 @@ jobs:
             cp "$f" "$tmp/Modules/CheatMenu/$rel"
           done
           cd "$tmp"
-          zip -r "$OLDPWD/CheatMenu.zip" .
+          zip -r "$OLDPWD/CheatMenu_v${{ steps.versions.outputs.cm }}.zip" .
 
       - uses: actions/upload-artifact@v4
         with:
           name: mods
           path: |
-            PhoenixRising.zip
-            CheatMenu.zip
+            PhoenixRising_v${{ steps.versions.outputs.pr }}.zip
+            CheatMenu_v${{ steps.versions.outputs.cm }}.zip
 
   release:
-    if: startsWith(github.ref, 'refs/tags/v')
     needs: build
     runs-on: ubuntu-latest
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v4
+
+      - name: Read versions
+        id: versions
+        run: |
+          echo "pr=$(jq -r .phoenixRising versions.json)" >> $GITHUB_OUTPUT
+          echo "cm=$(jq -r .cheatMenu versions.json)" >> $GITHUB_OUTPUT
+
       - uses: actions/download-artifact@v4
         with:
           name: mods
 
       - name: Create Release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            PhoenixRising.zip
-            CheatMenu.zip
-          generate_release_notes: true
+        run: |
+          TAG="v${{ steps.versions.outputs.pr }}"
+          gh release delete "$TAG" --yes --repo "${{ github.repository }}" 2>/dev/null || true
+          gh release create "$TAG" \
+            --target "${{ github.sha }}" \
+            --title "Phoenix Rising $TAG" \
+            --notes "Updated: phoenixRising to ${{ steps.versions.outputs.pr }}
+        Updated: cheatMenu     to ${{ steps.versions.outputs.cm }}" \
+            PhoenixRising_v${{ steps.versions.outputs.pr }}.zip \
+            CheatMenu_v${{ steps.versions.outputs.cm }}.zip
+        env:
+          GH_TOKEN: ${{ github.token }}
