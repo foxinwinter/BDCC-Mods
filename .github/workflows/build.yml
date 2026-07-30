@@ -50,6 +50,7 @@ jobs:
             CheatMenu_v${{ steps.versions.outputs.cm }}.zip
 
   release:
+    if: github.event_name == 'push'
     needs: build
     runs-on: ubuntu-latest
     permissions:
@@ -66,16 +67,22 @@ jobs:
       - uses: actions/download-artifact@v4
         with:
           name: mods
+          path: .
 
       - name: Create Release
         run: |
           TAG="v${{ steps.versions.outputs.pr }}"
-          gh release delete "$TAG" --yes --repo "${{ github.repository }}" 2>/dev/null || true
+          NOTES=$(cat <<EOF
+          Updated: phoenixRising to ${{ steps.versions.outputs.pr }}
+          Updated: cheatMenu     to ${{ steps.versions.outputs.cm }}
+          EOF
+          )
+          gh release delete "$TAG" --yes 2>/dev/null || true
+          git push --delete origin "$TAG" 2>/dev/null || true
           gh release create "$TAG" \
             --target "${{ github.sha }}" \
             --title "Phoenix Rising $TAG" \
-            --notes "Updated: phoenixRising to ${{ steps.versions.outputs.pr }}
-        Updated: cheatMenu     to ${{ steps.versions.outputs.cm }}" \
+            --notes "$NOTES" \
             PhoenixRising_v${{ steps.versions.outputs.pr }}.zip \
             CheatMenu_v${{ steps.versions.outputs.cm }}.zip
         env:
