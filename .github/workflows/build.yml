@@ -81,7 +81,7 @@ jobs:
           git push --delete origin "$TAG" 2>/dev/null || true
           gh release create "$TAG" \
             --target "${{ github.sha }}" \
-            --title "Phoenix Rising $TAG" \
+            --title "BDCC-Mods $TAG" \
             --notes "$NOTES" \
             PhoenixRising_v${{ steps.versions.outputs.pr }}.zip \
             CheatMenu_v${{ steps.versions.outputs.cm }}.zip
