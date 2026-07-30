@@ -13,19 +13,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          path: phoenixRising
-
-      - uses: actions/checkout@v4
-        with:
-          repository: BDCC-Mods/CheatMenu
-          path: cheatMenu
 
       - name: Build PhoenixRising
         run: |
           tmp=$(mktemp -d)
-          find phoenixRising -type f \( -name '*.gd' -o -name '*.tscn' -o -name '*.json' \) ! -path '*/\.github/*' | while read -r f; do
-            rel="${f#phoenixRising/}"
+          find . -type f \( -name '*.gd' -o -name '*.tscn' -o -name '*.json' \) \
+            ! -path '*/\.github/*' ! -path '*/CheatMenu/*' | while read -r f; do
+            rel="${f#./}"
             mkdir -p "$tmp/Modules/PhoenixRising/$(dirname "$rel")"
             cp "$f" "$tmp/Modules/PhoenixRising/$rel"
           done
@@ -35,8 +29,8 @@ jobs:
       - name: Build CheatMenu
         run: |
           tmp=$(mktemp -d)
-          find cheatMenu -type f \( -name '*.gd' -o -name '*.tscn' -o -name '*.json' \) ! -path '*/\.github/*' | while read -r f; do
-            rel="${f#cheatMenu/}"
+          find CheatMenu -type f \( -name '*.gd' -o -name '*.tscn' -o -name '*.json' \) ! -path '*/\.github/*' | while read -r f; do
+            rel="${f#CheatMenu/}"
             mkdir -p "$tmp/Modules/CheatMenu/$(dirname "$rel")"
             cp "$f" "$tmp/Modules/CheatMenu/$rel"
           done
