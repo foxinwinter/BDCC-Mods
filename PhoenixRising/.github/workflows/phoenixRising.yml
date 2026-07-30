@@ -1,4 +1,4 @@
-name: Build PhoenixRising
+name: Build PhoenixRising + CheatMenu
 
 on:
   push:
@@ -14,21 +14,41 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build zip
+      - name: Read versions
+        id: versions
+        run: |
+          echo "pr=$(jq -r .phoenixRising versions.json)" >> $GITHUB_OUTPUT
+          echo "cm=$(jq -r .cheatMenu versions.json)" >> $GITHUB_OUTPUT
+
+      - name: Build PhoenixRising
         run: |
           tmp=$(mktemp -d)
-          find . -type f \( -name '*.gd' -o -name '*.tscn' -o -name '*.json' \) | while read -r f; do
+          find . -type f \( -name '*.gd' -o -name '*.tscn' -o -name '*.json' \) \
+            ! -path '*/\.github/*' ! -path '*/CheatMenu/*' | while read -r f; do
             rel="${f#./}"
             mkdir -p "$tmp/Modules/PhoenixRising/$(dirname "$rel")"
             cp "$f" "$tmp/Modules/PhoenixRising/$rel"
           done
           cd "$tmp"
-          zip -r "$OLDPWD/PhoenixRising.zip" .
+          zip -r "$OLDPWD/PhoenixRising_v${{ steps.versions.outputs.pr }}.zip" .
+
+      - name: Build CheatMenu
+        run: |
+          tmp=$(mktemp -d)
+          find CheatMenu -type f \( -name '*.gd' -o -name '*.tscn' -o -name '*.json' \) ! -path '*/\.github/*' | while read -r f; do
+            rel="${f#CheatMenu/}"
+            mkdir -p "$tmp/Modules/CheatMenu/$(dirname "$rel")"
+            cp "$f" "$tmp/Modules/CheatMenu/$rel"
+          done
+          cd "$tmp"
+          zip -r "$OLDPWD/CheatMenu_v${{ steps.versions.outputs.cm }}.zip" .
 
       - uses: actions/upload-artifact@v4
         with:
-          name: PhoenixRising
-          path: PhoenixRising.zip
+          name: mods
+          path: |
+            PhoenixRising_v${{ steps.versions.outputs.pr }}.zip
+            CheatMenu_v${{ steps.versions.outputs.cm }}.zip
 
   release:
     if: startsWith(github.ref, 'refs/tags/v')
@@ -37,12 +57,24 @@ jobs:
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v4
+
+      - name: Read versions
+        id: versions
+        run: |
+          echo "pr=$(jq -r .phoenixRising versions.json)" >> $GITHUB_OUTPUT
+          echo "cm=$(jq -r .cheatMenu versions.json)" >> $GITHUB_OUTPUT
+
       - uses: actions/download-artifact@v4
         with:
-          name: PhoenixRising
+          name: mods
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
-          files: PhoenixRising.zip
-          generate_release_notes: true
+          files: |
+            PhoenixRising_v${{ steps.versions.outputs.pr }}.zip
+            CheatMenu_v${{ steps.versions.outputs.cm }}.zip
+          body: |
+            Updated: phoenixRising to ${{ steps.versions.outputs.pr }}
+            Updated: cheatMenu     to ${{ steps.versions.outputs.cm }}
